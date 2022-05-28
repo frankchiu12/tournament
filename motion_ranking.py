@@ -1,6 +1,4 @@
 import random
-from time import sleep
-import time
 from preprocessing import *
 
 class MotionRanking:
@@ -101,4 +99,4 @@ class MotionRanking:
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 
-# check if matchup is valid
+# check if matchup is valid, email

@@ -1,83 +1,78 @@
-from uuid import uuid4
-import csv
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-
-scopes = [
-'https://www.googleapis.com/auth/spreadsheets',
-'https://www.googleapis.com/auth/drive'
-]
-credentials = ServiceAccountCredentials.from_json_keyfile_name("motion_ranking.json", scopes)
-file = gspread.authorize(credentials)
-sheet = file.open("Motion Ranking")
-sheet = sheet.sheet1
+import random
+from preprocessing import *
 
 class MotionRanking:
 
-    def __init__(self):
-        self.team_to_id = {}
-        self.team_list_CSV_parsing('/Users/franksi-unchiu/Downloads/Team_List.csv')
-        self.generate_random_id()
-        self.write_to_google_sheet()
+    def __init__(self, team_to_id):
+        self.team_to_id = team_to_id
+        self.matchup = {}
+        self.team_to_ranking = {}
+        self.get_matchups()
+        self.get_motion_ranking()
+        self.return_motion_to_debate()
 
-    def team_list_CSV_parsing(self, CSV_filepath):
-        self.team_list = []
-        with open(CSV_filepath, 'r') as csv_file:
-            csvreader = csv.reader(csv_file)
-            next(csvreader) 
-            for row in csvreader:
-                self.team_list.append(row[0])
+    def get_matchups(self):
+        col_1 = matchup_sheet.col_values(1)
+        del col_1[0:1]
+        col_2 = matchup_sheet.col_values(2)
+        del col_2[0:1]
+        for i in range(len(col_1)):
+            if col_1[i] not in self.matchup:
+                self.matchup[col_1[i]] = col_2[i]
 
-    def generate_random_id(self):
+    def get_motion_ranking(self):
+        col_2 = motion_ranking_sheet.col_values(2)
+        del col_2[0:1]
+        col_3 = motion_ranking_sheet.col_values(3)
+        del col_3[0:1]
+        col_4 = motion_ranking_sheet.col_values(4)
+        del col_4[0:1]
+        col_5 = motion_ranking_sheet.col_values(5)
+        del col_5[0:1]
+        col_6 = motion_ranking_sheet.col_values(6)
+        del col_6[0:1]
+        matching_id_index_list = []
+        unmatching_id_list = []
 
-        flipped = {}
-        is_unique = False
-        not_unique_keys_to_change_list = []
+        for i in range(len(col_2)):
+            if self.team_to_id[col_2[i]] != col_3[i]:
+                unmatching_id_list.append(col_2[i])
+            else:
+                matching_id_index_list.append(i)
+        
+        for i in matching_id_index_list:
+            if col_2[i] not in self.team_to_ranking:
+                self.team_to_ranking[col_2[i]] = []
+            self.team_to_ranking[col_2[i]].append(col_4[i])
+            self.team_to_ranking[col_2[i]].append(col_5[i])
+            self.team_to_ranking[col_2[i]].append(col_6[i])
 
-        for team in self.team_list:
-            unique_id = str(uuid4().time_low)
-            if team not in self.team_to_id:
-                self.team_to_id[team] = ''
-            self.team_to_id[team] = unique_id
-
-        while not is_unique:
-            if(len(not_unique_keys_to_change_list) > 0):
-                for team in not_unique_keys_to_change_list:
-                    unique_id = str(uuid4().time_low)
-                    if team not in self.team_to_id:
-                        self.team_to_id[team] = ''
-                    self.team_to_id[team] = unique_id
-
-            not_unique_keys_to_change_list = []
-            flipped = {}
-
-            for key, value in self.team_to_id.items():
-                if value not in flipped:
-                    flipped[value] = [key]
-                else:
-                    flipped[value].append(key)
-
-            for key, value in self.team_to_id.items():
-                if len(flipped[value]) > 1:
-                    is_unique = False
-                    flipped_value_split = flipped[value]
-                    for flipped_value in flipped_value_split:
-                        not_unique_keys_to_change_list.append(flipped_value)
+    def return_motion_to_debate(self):
+        prop_team_list = []
+        opp_team_list = []
+        prop_team_ranking = {}
+        opp_team_ranking = {}
+        for key, value in self.matchup.items():
+            prop_team_list.append(key)
+            opp_team_list.append(value)
+        
+        for i in range(len(prop_team_list)):
+            motion_number_to_return_list = []
+            prop_team_ranking = self.team_to_ranking[prop_team_list[i]]
+            opp_team_ranking = self.team_to_ranking[opp_team_list[i]]
+            for j in range(3):
+                if prop_team_ranking[j] == '3' or opp_team_ranking[j] == '3':
+                    continue
+                elif prop_team_ranking[j] == '1' and prop_team_ranking[j] == opp_team_ranking[j]:
+                    motion_number_to_return_list.append(j)
                     break
                 else:
-                    is_unique = True
+                    motion_number_to_return_list.append(j)
+            
+            if len(motion_number_to_return_list) > 1:
+                randomlist = [0, 1]
+                motion_number_to_return_list = [random.choice(randomlist)]
+            
+            print(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
 
-        print(self.team_to_id)
-    
-    def write_to_google_sheet(self):
-        team_list = []
-        id_list = []
-        for key, value in self.team_to_id.items():
-            team_list.append(key)
-            id_list.append(value)
-        for i in range (2, len(team_list) + 2):
-            sheet.update_cell(i, 1, team_list[i-2])
-        for i in range (2, len(id_list) + 2):
-            sheet.update_cell(i, 2, id_list[i-2])
-
-motion_ranking = MotionRanking()
+MotionRanking({'a': '1246026682', 'b': '4051627148', 'c': '1215176264', 'd': '487039422', 'e': '1316668231', 'f': '3720553852'})

@@ -1,4 +1,5 @@
 import random
+import sys
 from preprocessing import *
 
 col_1 = matchup_sheet.col_values(1)
@@ -10,20 +11,28 @@ class MotionRanking:
 
     def __init__(self, team_to_id):
         self.team_to_id = team_to_id
+        self.invalid_matchup_list = []
         self.matchup = {}
         self.team_to_ranking = {}
         self.unmatching_id_list = []
         self.result_list = []
+
+        self.check_if_matchup_is_valid()
+        if len(self.invalid_matchup_list) > 0:
+            print('There is/are invalid team(s) in the matchup allocations: ' + str(self.invalid_matchup_list))
+            sys.exit()
+
         self.get_matchups()
         self.get_motion_ranking()
         self.return_motion_to_debate()
 
     # check if the matchup is valid
     def check_if_matchup_is_valid(self):
-        for team in col_1:
-            if col_1.count(team) > 1:
-                return True
-        return False
+        matchup_list = col_1 + col_2
+        for team in matchup_list:
+            if matchup_list.count(team) > 1:
+                if team not in self.invalid_matchup_list:
+                    self.invalid_matchup_list.append(team)
 
     def get_matchups(self):
         for i in range(len(col_1)):
@@ -124,4 +133,4 @@ class MotionRanking:
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 
-# check if matchup is valid, email, timer
+# email, timer

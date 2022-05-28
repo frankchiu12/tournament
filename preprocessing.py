@@ -14,12 +14,13 @@ team_teamid_sheet = sheet.get_worksheet(1)
 matchup_sheet = sheet.get_worksheet(2)
 motion_ranking_sheet = sheet.get_worksheet(3)
 
+col_1 = team_sheet.col_values(1)
+del col_1[0:1]
+sheet_team_list = col_1
+
 class PreProcessing:
 
     def __init__(self):
-        col_1 = team_sheet.col_values(1)
-        del col_1[0:1]
-        self.team_list = col_1
         self.team_to_id = {}
         self.matchup = {}
         self.generate_random_id()
@@ -31,7 +32,7 @@ class PreProcessing:
         is_unique = False
         not_unique_keys_to_change_list = []
 
-        for team in self.team_list:
+        for team in sheet_team_list:
             unique_id = str(uuid4().time_low)
             if team not in self.team_to_id:
                 self.team_to_id[team] = ''

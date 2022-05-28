@@ -9,6 +9,8 @@ class MotionRanking:
         self.team_to_id = team_to_id
         self.matchup = {}
         self.team_to_ranking = {}
+        self.unmatching_id_list = []
+        self.result_list = []
         self.get_matchups()
         self.get_motion_ranking()
         self.return_motion_to_debate()
@@ -34,11 +36,10 @@ class MotionRanking:
         col_6 = motion_ranking_sheet.col_values(6)
         del col_6[0:1]
         matching_id_index_list = []
-        unmatching_id_list = []
 
         for i in range(len(col_2)):
             if self.team_to_id[col_2[i]] != col_3[i]:
-                unmatching_id_list.append(col_2[i])
+                self.unmatching_id_list.append(col_2[i])
             else:
                 matching_id_index_list.append(i)
 
@@ -55,8 +56,16 @@ class MotionRanking:
         prop_team_ranking = {}
         opp_team_ranking = {}
         for key, value in self.matchup.items():
-            prop_team_list.append(key)
-            opp_team_list.append(value)
+            if len(self.unmatching_id_list) != 0:
+                for unmatching_id in self.unmatching_id_list:
+                    if key != unmatching_id.strip('') and value != unmatching_id.strip(''):
+                        prop_team_list.append(key)
+                        opp_team_list.append(value)
+            elif key not in self.team_to_ranking:
+                continue
+            else:
+                prop_team_list.append(key)
+                opp_team_list.append(value)
 
         for i in range(len(prop_team_list)):
             motion_number_to_return_list = []
@@ -76,12 +85,15 @@ class MotionRanking:
                 motion_number_to_return_list = [random.choice(randomlist)]
 
             print(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
-    
+
+            self.result_list.append(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
+
     def loop(self):
         previous_form = motion_ranking_sheet.get_all_values()
-        while True:
+        while len(self.result_list) != len(self.matchup):
             if previous_form != motion_ranking_sheet.get_all_values():
-                print('reaching')
                 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
                 previous_form = motion_ranking_sheet.get_all_values()
-            time.sleep(10)
+                self.result_list = motion_ranking.result_list
+
+motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})

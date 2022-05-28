@@ -148,7 +148,8 @@ class MotionRanking:
                 self.result_list = motion_ranking.result_list
             if len(self.result_list) == len(self.matchup):
                 break
-            time.sleep(60)
+            # API constraints
+            time.sleep(100)
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 

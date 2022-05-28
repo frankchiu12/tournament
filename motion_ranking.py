@@ -87,6 +87,9 @@ class MotionRanking:
             print(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
 
             self.result_list.append(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
+    
+    def write_to_result_sheets():
+        pass
 
     def loop(self):
         previous_form = motion_ranking_sheet.get_all_values()
@@ -97,3 +100,5 @@ class MotionRanking:
                 self.result_list = motion_ranking.result_list
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
+
+# check if matchup is valid

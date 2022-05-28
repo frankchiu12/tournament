@@ -74,10 +74,16 @@ class MotionRanking:
         for key, value in self.matchup.items():
             if len(self.unmatching_id_list) != 0:
                 for unmatching_id in self.unmatching_id_list:
-                    if key != unmatching_id.strip('') and value != unmatching_id.strip(''):
+                    if key == unmatching_id.strip(''):
+                        break
+                    elif value != unmatching_id.strip(''):
+                        break
+                    else:
                         prop_team_list.append(key)
-                        opp_team_list.append(value)
+                        opp_team_list.append(value) 
             elif key not in self.team_to_ranking:
+                continue
+            elif value not in self.team_to_ranking:
                 continue
             else:
                 prop_team_list.append(key)
@@ -118,7 +124,7 @@ class MotionRanking:
         ranking_result_sheet.update_cell(1, 2, 'OPPOSITION')
         ranking_result_sheet.update_cell(1, 3, 'MOTION')
         ranking_result_sheet.update_cell(1, 4, 'TIME STARTED')
-        ranking_result_sheet.update_cell(1, 5, 'TIMER')
+        ranking_result_sheet.update_cell(1, 5, 'TIME LEFT (MINUTES)')
         ranking_result_sheet.update_cell(1, 6, 'PROPOSITION VETO')
         ranking_result_sheet.update_cell(1, 7, 'OPPOSITION VETO')
         ranking_result_sheet.update_cell(i + 2, 1, prop)
@@ -127,7 +133,7 @@ class MotionRanking:
         ranking_result_sheet.update_cell(i + 2, 6, prop_veto)
         ranking_result_sheet.update_cell(i + 2, 7, opp_veto)
 
-        time = datetime.now() + timedelta(minutes=2)
+        time = datetime.now() + timedelta(minutes=15)
         if ranking_result_sheet.cell(i + 2, 4).value == None:
             ranking_result_sheet.update_cell(i + 2, 4, str(time))
             ranking_result_sheet.update_cell(i + 2, 5, '= IF(D' + str(i + 2) + '-NOW() > 0, MINUTE(D' + str(i + 2) + '-NOW()), 0)')

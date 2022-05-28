@@ -69,6 +69,8 @@ class MotionRanking:
             motion_number_to_return_list = []
             prop_team_ranking = self.team_to_ranking[prop_team_list[i]]
             opp_team_ranking = self.team_to_ranking[opp_team_list[i]]
+            prop_team_veto = ''
+            opp_team_veto = ''
             for j in range(3):
                 if prop_team_ranking[j] == '3' or opp_team_ranking[j] == '3':
                     continue
@@ -84,10 +86,19 @@ class MotionRanking:
 
             print(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
 
+            self.write_to_result_sheets(prop_team_list[i], opp_team_list[i], str(int(motion_number_to_return_list[0]) + 1), i)
+
             self.result_list.append(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
-    
-    def write_to_result_sheets():
-        pass
+
+    def write_to_result_sheets(self, prop, opp, motion_number_to_return, i):
+        ranking_result_sheet.update_cell(1, 1, 'PROPOSITION')
+        ranking_result_sheet.update_cell(1, 2, 'OPPOSITION')
+        ranking_result_sheet.update_cell(1, 3, 'MOTION')
+        ranking_result_sheet.update_cell(1, 5, 'PROPOSITION VETO')
+        ranking_result_sheet.update_cell(1, 6, 'OPPOSITION VETO')
+        ranking_result_sheet.update_cell(i + 2, 1, prop)
+        ranking_result_sheet.update_cell(i + 2, 2, opp)
+        ranking_result_sheet.update_cell(i + 2, 3, motion_number_to_return)
 
     def loop(self):
         previous_form = motion_ranking_sheet.get_all_values()
@@ -99,4 +110,4 @@ class MotionRanking:
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 
-# check if matchup is valid, email
+# check if matchup is valid, email, timer, veto

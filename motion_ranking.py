@@ -1,6 +1,7 @@
 import random
 import sys
 from preprocessing import *
+from datetime import datetime, timedelta
 
 col_1 = matchup_sheet.col_values(1)
 del col_1[0:1]
@@ -89,39 +90,47 @@ class MotionRanking:
             prop_veto = ''
             opp_veto = ''
             for j in range(3):
-                if prop_team_ranking[j] == '3' or opp_team_ranking[j] == '3':
-                    if prop_team_ranking[j] == '3':
-                        prop_veto = j + 1
-                    if opp_team_ranking[j] == '3':
-                        opp_veto = j + 1
-                    continue
+                if prop_team_ranking[j] == '3':
+                    prop_veto = j + 1
+                if opp_team_ranking[j] == '3':
+                    opp_veto = j + 1
                 elif prop_team_ranking[j] == '1' and prop_team_ranking[j] == opp_team_ranking[j]:
-                    motion_number_to_return_list.append(j)
+                    motion_number_to_return_list.append(j + 1)
                     break
-                else:
-                    motion_number_to_return_list.append(j)
+                elif prop_team_ranking[j] != '3' and opp_team_ranking[j] != '3':
+                    motion_number_to_return_list.append(j + 1)
 
             if len(motion_number_to_return_list) > 1:
                 randomlist = [0, 1]
-                motion_number_to_return_list = [random.choice(randomlist)]
+                newlist = []
+                newlist.append(motion_number_to_return_list[random.choice(randomlist)])
+                motion_number_to_return_list = newlist
 
-            print(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
+            print(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0])))
 
-            self.write_to_result_sheets(prop_team_list[i], opp_team_list[i], str(int(motion_number_to_return_list[0]) + 1), prop_veto, opp_veto, i)
+            self.write_to_result_sheets(prop_team_list[i], opp_team_list[i], str(int(motion_number_to_return_list[0])), prop_veto, opp_veto, i)
 
-            self.result_list.append(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0]) + 1))
+            self.result_list.append(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0])))
 
+    # clear sheet before new round
     def write_to_result_sheets(self, prop, opp, motion_number_to_return, prop_veto, opp_veto, i):
         ranking_result_sheet.update_cell(1, 1, 'PROPOSITION')
         ranking_result_sheet.update_cell(1, 2, 'OPPOSITION')
         ranking_result_sheet.update_cell(1, 3, 'MOTION')
-        ranking_result_sheet.update_cell(1, 5, 'PROPOSITION VETO')
-        ranking_result_sheet.update_cell(1, 6, 'OPPOSITION VETO')
+        ranking_result_sheet.update_cell(1, 4, 'TIME STARTED')
+        ranking_result_sheet.update_cell(1, 5, 'TIMER')
+        ranking_result_sheet.update_cell(1, 6, 'PROPOSITION VETO')
+        ranking_result_sheet.update_cell(1, 7, 'OPPOSITION VETO')
         ranking_result_sheet.update_cell(i + 2, 1, prop)
         ranking_result_sheet.update_cell(i + 2, 2, opp)
         ranking_result_sheet.update_cell(i + 2, 3, motion_number_to_return)
-        ranking_result_sheet.update_cell(i + 2, 5, prop_veto)
-        ranking_result_sheet.update_cell(i + 2, 6, opp_veto)
+        ranking_result_sheet.update_cell(i + 2, 6, prop_veto)
+        ranking_result_sheet.update_cell(i + 2, 7, opp_veto)
+
+        time = datetime.now() + timedelta(minutes=15)
+        if ranking_result_sheet.cell(i + 2, 4).value == None:
+            ranking_result_sheet.update_cell(i + 2, 4, str(time))
+            ranking_result_sheet.update_cell(i + 2, 5, '= MINUTE(D2-NOW())')
 
     def loop(self):
         previous_form = motion_ranking_sheet.get_all_values()
@@ -133,4 +142,4 @@ class MotionRanking:
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 
-# email, timer
+# timer

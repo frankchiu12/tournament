@@ -1,5 +1,6 @@
 import random
 import sys
+import time
 from preprocessing import *
 from datetime import datetime, timedelta
 
@@ -140,11 +141,14 @@ class MotionRanking:
 
     def loop(self):
         previous_form = motion_ranking_sheet.get_all_values()
-        while len(self.result_list) != len(self.matchup):
+        while True:
             if previous_form != motion_ranking_sheet.get_all_values():
                 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
                 previous_form = motion_ranking_sheet.get_all_values()
                 self.result_list = motion_ranking.result_list
+            if len(self.result_list) == len(self.matchup):
+                break
+            time.sleep(60)
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 

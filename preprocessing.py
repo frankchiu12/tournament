@@ -19,6 +19,10 @@ col_1 = team_sheet.col_values(1)
 del col_1[0:1]
 sheet_team_list = col_1
 
+col_2 = team_sheet.col_values(2)
+del col_2[0:1]
+sheet_email_list = col_2
+
 class PreProcessing:
 
     def __init__(self):

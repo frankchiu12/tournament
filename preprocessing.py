@@ -27,8 +27,8 @@ class PreProcessing:
         self.generate_random_id()
         self.write_to_google_sheet()
 
+    # generate unique and random id for each team
     def generate_random_id(self):
-
         flipped = {}
         is_unique = False
         not_unique_keys_to_change_list = []

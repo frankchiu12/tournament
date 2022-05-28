@@ -21,7 +21,7 @@ class MotionRanking:
 
         self.check_if_matchup_is_valid()
         if len(self.invalid_matchup_list) > 0:
-            print('There is/are invalid team(s) in the matchup allocations: ' + str(self.invalid_matchup_list))
+            print('There is/are invalid team(s) in the matchup: ' + str(self.invalid_matchup_list))
             sys.exit()
 
         self.get_matchups()

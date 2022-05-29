@@ -13,12 +13,12 @@ class TeamRanking:
         self.unranked_team_list = []
         self.sorted_row_list = []
         self.all_row_values = []
-        self.team_to_row = {}
 
         # optimizing
         self.team_to_row_list = {}
         self.team_to_average_list = {}
-        self.team_to_row_list_value = []
+        self.team_to_score_list = []
+        self.sorted_team_list = []
         self.get_score_and_result()
         self.populate_row_list_dictionary()
         if self.check_if_all_results_are_in():
@@ -49,17 +49,20 @@ class TeamRanking:
             self.sorted_row_list.append(self.row_list_dictionary[team])
 
     def write_result_to_sheet(self):
-        # team_ranking_result_sheet.update_cell(1, 1, 'TEAM')
-        # team_ranking_result_sheet.update_cell(1, round + 1, 'ROUND ' + str(round))
-        for i in range(2, len(sheet_team_list) + 2):
-            team_ranking_result_sheet.update_cell(i, 1, sheet_team_list[i - 2])
-        for i in range(2, len(sheet_team_list) + 2):
-            team_ranking_result_sheet.update('B2:E7', self.team_to_row_list_value)
+        team_ranking_result_sheet.update_cell(1, 2, 'TEAM')
+        for round in range(self.total_number_of_rounds):
+            team_ranking_result_sheet.update_cell(1, round + 3, 'ROUND ' + str(round + 1))
+        team_ranking_result_sheet.update('C2', self.team_to_score_list)
 
     def write_average_to_sheet(self):
-        team_ranking_result_sheet.update_cell(1, self.total_number_of_rounds + 2, 'AVERAGE')
-        for i in range(2, len(sheet_team_list) + 2):
-            team_ranking_result_sheet.update_cell(i, self.total_number_of_rounds + 2, self.team_to_average_list[sheet_team_list[i - 2]])
+        team_ranking_result_sheet.update_cell(1, self.total_number_of_rounds + 3, 'AVERAGE')
+        for i in range(len(self.sorted_team_list)):
+            team_ranking_result_sheet.update_cell(i + 2, 2, self.sorted_team_list[i])
+            team_ranking_result_sheet.update_cell(i + 2, self.total_number_of_rounds + 3, self.team_to_average_list[self.sorted_team_list[i]])
+
+    def convert(self, tuple, dictionary):
+        dictionary = dict(tuple)
+        return dictionary
 
     def loop(self):
 
@@ -69,19 +72,24 @@ class TeamRanking:
             self.all_row_values.append(self.sorted_row_list)
 
         for team in range(len(sheet_team_list)):
-            if sheet_team_list[team] not in self.team_to_row_list:
-                self.team_to_row_list[sheet_team_list[team]] = [x[team] for x in self.all_row_values]
-            self.team_to_row_list_value.append([x[team] for x in self.all_row_values])
-        print(self.team_to_row_list)
-
-        for team in range(len(sheet_team_list)):
             if sheet_team_list[team] not in self.team_to_average_list:
                 self.team_to_average_list[sheet_team_list[team]] = [sum(row[j] for row in self.all_row_values) for j in range(len(self.all_row_values[0]))][team]/self.total_number_of_rounds
-        print(self.team_to_average_list)
+
+        sorted_average_list = sorted(self.team_to_average_list.items(), key=lambda x: x[1], reverse=True)
+        self.team_to_average_list = self.convert(sorted_average_list, self.team_to_average_list)
+
+        for team in range(len(sheet_team_list)):
+            if sheet_team_list[team] not in self.team_to_row_list:
+                self.team_to_row_list[sheet_team_list[team]] = [x[team] for x in self.all_row_values]
+
+        for team in self.team_to_average_list:
+            self.team_to_score_list.append(self.team_to_row_list[team])
+            self.sorted_team_list.append(team)
+
         self.write_result_to_sheet()
         self.write_average_to_sheet()
 
 team_ranking = TeamRanking(1, 4)
 team_ranking.loop()
 
-# REPL, status
+# REPL, status, panda

@@ -1,6 +1,6 @@
 from preprocessing import *
 
-team_ranking_result_sheet = sheet.get_worksheet(10)
+team_ranking_result_sheet = sheet.get_worksheet(9)
 
 class TeamRanking:
 
@@ -10,6 +10,7 @@ class TeamRanking:
         self.row_list_dictionary = {}
         self.unranked_team_list = []
         self.sorted_row_list = []
+        self.team_to_average = {}
         self.get_score_and_result()
         self.populate_row_list_dictionary()
         if self.check_if_all_results_are_in():
@@ -46,5 +47,7 @@ class TeamRanking:
         for i in range(2, len(sheet_team_list) + 2):
             team_ranking_result_sheet.update_cell(i, round + 1, int(self.sorted_row_list[i - 2][0]))
 
-for i in range(1, 6):
+for i in range(1, 5):
     team_ranking = TeamRanking(i)
+
+# need # of rounds variable, access each row and do computations to return average, REPL, status

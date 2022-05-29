@@ -36,7 +36,7 @@ class TeamRanking:
                 self.row_list_dictionary[row[0]] = int(row[1: 2][0])
 
     def check_if_all_results_are_in(self):
-        for team in sheet_team_list:
+        for team in team_list:
             if team not in self.row_list_dictionary:
                 self.unranked_team_list.append(team)
         if len(self.unranked_team_list) > 0:
@@ -45,7 +45,7 @@ class TeamRanking:
         return True
 
     def sort_sheet(self):
-        for team in sheet_team_list:
+        for team in team_list:
             self.sorted_row_list.append(self.row_list_dictionary[team])
 
     def write_score_to_sheet(self):
@@ -73,16 +73,16 @@ class TeamRanking:
             self.sorted_row_list = team_ranking.sorted_row_list
             self.all_row_values.append(self.sorted_row_list)
 
-        for team in range(len(sheet_team_list)):
-            if sheet_team_list[team] not in self.team_to_average_list:
-                self.team_to_average_list[sheet_team_list[team]] = [sum(row[j] for row in self.all_row_values) for j in range(len(self.all_row_values[0]))][team]/self.total_number_of_rounds
+        for team in range(len(team_list)):
+            if team_list[team] not in self.team_to_average_list:
+                self.team_to_average_list[team_list[team]] = [sum(row[j] for row in self.all_row_values) for j in range(len(self.all_row_values[0]))][team]/self.total_number_of_rounds
 
         sorted_average_list = sorted(self.team_to_average_list.items(), key=lambda x: x[1], reverse=True)
         self.team_to_average_list = self.convert(sorted_average_list, self.team_to_average_list)
 
-        for team in range(len(sheet_team_list)):
-            if sheet_team_list[team] not in self.team_to_row_list:
-                self.team_to_row_list[sheet_team_list[team]] = [x[team] for x in self.all_row_values]
+        for team in range(len(team_list)):
+            if team_list[team] not in self.team_to_row_list:
+                self.team_to_row_list[team_list[team]] = [x[team] for x in self.all_row_values]
 
         for team in self.team_to_average_list:
             self.team_to_score_list.append(self.team_to_row_list[team])

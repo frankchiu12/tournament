@@ -1,15 +1,13 @@
 import random
 import sys
 import time
-from preprocessing import *
+from get_google_sheets import *
 from datetime import datetime, timedelta
 
 col_1 = matchup_sheet.col_values(1)
 del col_1[0:1]
 col_2 = matchup_sheet.col_values(2)
 del col_2[0:1]
-
-print(team_sheet)
 
 class MotionRanking:
 

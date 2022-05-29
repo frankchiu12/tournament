@@ -1,7 +1,7 @@
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
-from preprocessing import *
+from get_google_sheets import *
 from color import *
 
 team_to_id = {'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'}

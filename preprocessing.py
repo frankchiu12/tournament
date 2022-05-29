@@ -13,7 +13,7 @@ team_sheet = sheet.get_worksheet(0)
 team_teamid_sheet = sheet.get_worksheet(1)
 matchup_sheet = sheet.get_worksheet(2)
 motion_ranking_sheet = sheet.get_worksheet(3)
-ranking_result_sheet = sheet.get_worksheet(4)
+motion_ranking_result_sheet = sheet.get_worksheet(4)
 
 col_1 = team_sheet.col_values(1)
 del col_1[0:1]

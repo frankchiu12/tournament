@@ -9,6 +9,8 @@ del col_1[0:1]
 col_2 = matchup_sheet.col_values(2)
 del col_2[0:1]
 
+print(team_sheet)
+
 class MotionRanking:
 
     def __init__(self, team_to_id):
@@ -121,23 +123,23 @@ class MotionRanking:
 
     # clear sheet before new round
     def write_to_result_sheets(self, prop, opp, motion_number_to_return, prop_veto, opp_veto, i):
-        ranking_result_sheet.update_cell(1, 1, 'PROPOSITION')
-        ranking_result_sheet.update_cell(1, 2, 'OPPOSITION')
-        ranking_result_sheet.update_cell(1, 3, 'MOTION')
-        ranking_result_sheet.update_cell(1, 4, 'TIME STARTED')
-        ranking_result_sheet.update_cell(1, 5, 'TIME LEFT (MINUTES)')
-        ranking_result_sheet.update_cell(1, 6, 'PROPOSITION VETO')
-        ranking_result_sheet.update_cell(1, 7, 'OPPOSITION VETO')
-        ranking_result_sheet.update_cell(i + 2, 1, prop)
-        ranking_result_sheet.update_cell(i + 2, 2, opp)
-        ranking_result_sheet.update_cell(i + 2, 3, motion_number_to_return)
-        ranking_result_sheet.update_cell(i + 2, 6, prop_veto)
-        ranking_result_sheet.update_cell(i + 2, 7, opp_veto)
+        motion_ranking_result_sheet.update_cell(1, 1, 'PROPOSITION')
+        motion_ranking_result_sheet.update_cell(1, 2, 'OPPOSITION')
+        motion_ranking_result_sheet.update_cell(1, 3, 'MOTION')
+        motion_ranking_result_sheet.update_cell(1, 4, 'TIME STARTED')
+        motion_ranking_result_sheet.update_cell(1, 5, 'TIME LEFT (MINUTES)')
+        motion_ranking_result_sheet.update_cell(1, 6, 'PROPOSITION VETO')
+        motion_ranking_result_sheet.update_cell(1, 7, 'OPPOSITION VETO')
+        motion_ranking_result_sheet.update_cell(i + 2, 1, prop)
+        motion_ranking_result_sheet.update_cell(i + 2, 2, opp)
+        motion_ranking_result_sheet.update_cell(i + 2, 3, motion_number_to_return)
+        motion_ranking_result_sheet.update_cell(i + 2, 6, prop_veto)
+        motion_ranking_result_sheet.update_cell(i + 2, 7, opp_veto)
 
         time = datetime.now() + timedelta(minutes=15)
-        if ranking_result_sheet.cell(i + 2, 4).value == None:
-            ranking_result_sheet.update_cell(i + 2, 4, str(time))
-            ranking_result_sheet.update_cell(i + 2, 5, '= IF(D' + str(i + 2) + '-NOW() > 0, MINUTE(D' + str(i + 2) + '-NOW()), 0)')
+        if motion_ranking_result_sheet.cell(i + 2, 4).value == None:
+            motion_ranking_result_sheet.update_cell(i + 2, 4, str(time))
+            motion_ranking_result_sheet.update_cell(i + 2, 5, '= IF(D' + str(i + 2) + '-NOW() > 0, MINUTE(D' + str(i + 2) + '-NOW()), 0)')
 
     def loop(self):
         previous_form = motion_ranking_sheet.get_all_values()
@@ -152,5 +154,3 @@ class MotionRanking:
             time.sleep(100)
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
-
-# timer hit 0

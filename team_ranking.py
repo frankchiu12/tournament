@@ -48,15 +48,17 @@ class TeamRanking:
         for team in sheet_team_list:
             self.sorted_row_list.append(self.row_list_dictionary[team])
 
-    def write_result_to_sheet(self):
-        team_ranking_result_sheet.update_cell(1, 2, 'TEAM')
+    def write_score_to_sheet(self):
         for round in range(self.total_number_of_rounds):
             team_ranking_result_sheet.update_cell(1, round + 3, 'ROUND ' + str(round + 1))
         team_ranking_result_sheet.update('C2', self.team_to_score_list)
 
     def write_average_to_sheet(self):
+        team_ranking_result_sheet.update_cell(1, 1, 'RANKING')
+        team_ranking_result_sheet.update_cell(1, 2, 'TEAM')
         team_ranking_result_sheet.update_cell(1, self.total_number_of_rounds + 3, 'AVERAGE')
         for i in range(len(self.sorted_team_list)):
+            team_ranking_result_sheet.update_cell(i + 2, 1, i + 2)
             team_ranking_result_sheet.update_cell(i + 2, 2, self.sorted_team_list[i])
             team_ranking_result_sheet.update_cell(i + 2, self.total_number_of_rounds + 3, self.team_to_average_list[self.sorted_team_list[i]])
 
@@ -86,7 +88,7 @@ class TeamRanking:
             self.team_to_score_list.append(self.team_to_row_list[team])
             self.sorted_team_list.append(team)
 
-        self.write_result_to_sheet()
+        self.write_score_to_sheet()
         self.write_average_to_sheet()
 
 team_ranking = TeamRanking(1, 4)

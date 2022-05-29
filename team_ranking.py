@@ -1,3 +1,4 @@
+import sys
 from get_google_sheets import *
 
 team_ranking_result_sheet = sheet.get_worksheet(9)
@@ -13,16 +14,17 @@ class TeamRanking:
         self.sorted_row_list = []
         self.all_row_values = []
         self.team_to_row = {}
-        self.team_to_average = {}
 
         # optimizing
         self.team_to_row_list = {}
         self.team_to_average_list = {}
+        self.team_to_row_list_value = []
         self.get_score_and_result()
         self.populate_row_list_dictionary()
         if self.check_if_all_results_are_in():
             self.sort_sheet()
-            #self.write_result_to_sheet(round)
+        else:
+            sys.exit()
 
     def get_score_and_result(self):
         for i in range(1, len(self.round_sheet.get_all_values())):
@@ -46,44 +48,38 @@ class TeamRanking:
         for team in sheet_team_list:
             self.sorted_row_list.append(self.row_list_dictionary[team])
 
-    def write_result_to_sheet(self, round):
-        team_ranking_result_sheet.update_cell(1, 1, 'TEAM')
-        team_ranking_result_sheet.update_cell(1, round + 1, 'ROUND ' + str(round))
+    def write_result_to_sheet(self):
+        # team_ranking_result_sheet.update_cell(1, 1, 'TEAM')
+        # team_ranking_result_sheet.update_cell(1, round + 1, 'ROUND ' + str(round))
         for i in range(2, len(sheet_team_list) + 2):
             team_ranking_result_sheet.update_cell(i, 1, sheet_team_list[i - 2])
-        # for i in range(2, len(sheet_team_list) + 2):
-        #     team_ranking_result_sheet.update_cell(i, round + 1, int(self.sorted_row_list[i - 2][0]))
-
-    def calculate_average_using_list():
-        pass
-    
-    def calculate_average(self):
-        for i in range(1, len(sheet_team_list) + 1):
-            if sheet_team_list[i - 1] not in self.team_to_row:
-                self.team_to_row[sheet_team_list[i - 1]] = team_ranking_result_sheet.row_values(i + 1)
-        for i in range(1, len(sheet_team_list) + 1):
-            if sheet_team_list[i - 1] not in self.team_to_average:
-                self.team_to_average[sheet_team_list[i - 1]] = self.team_to_row[sheet_team_list[i - 1]][1: int(self.total_number_of_rounds + 1)]
-        for team in sheet_team_list:
-            self.team_to_average[team] = sum([int(i) for i in self.team_to_average[team]])/self.total_number_of_rounds
+        for i in range(2, len(sheet_team_list) + 2):
+            team_ranking_result_sheet.update('B2:E7', self.team_to_row_list_value)
 
     def write_average_to_sheet(self):
+        team_ranking_result_sheet.update_cell(1, self.total_number_of_rounds + 2, 'AVERAGE')
         for i in range(2, len(sheet_team_list) + 2):
-            team_ranking_result_sheet.update_cell(i, self.total_number_of_rounds + 2, self.team_to_average[sheet_team_list[i]])
+            team_ranking_result_sheet.update_cell(i, self.total_number_of_rounds + 2, self.team_to_average_list[sheet_team_list[i - 2]])
 
     def loop(self):
+
         for i in range(1, 5):
             team_ranking = TeamRanking(i, 4)
             self.sorted_row_list = team_ranking.sorted_row_list
             self.all_row_values.append(self.sorted_row_list)
-        
-        for team in range(len(sheet_team_list)):
-
 
         for team in range(len(sheet_team_list)):
-            if sheet_team_list[i] not in self.team_to_average_list:
+            if sheet_team_list[team] not in self.team_to_row_list:
+                self.team_to_row_list[sheet_team_list[team]] = [x[team] for x in self.all_row_values]
+            self.team_to_row_list_value.append([x[team] for x in self.all_row_values])
+        print(self.team_to_row_list)
+
+        for team in range(len(sheet_team_list)):
+            if sheet_team_list[team] not in self.team_to_average_list:
                 self.team_to_average_list[sheet_team_list[team]] = [sum(row[j] for row in self.all_row_values) for j in range(len(self.all_row_values[0]))][team]/self.total_number_of_rounds
         print(self.team_to_average_list)
+        self.write_result_to_sheet()
+        self.write_average_to_sheet()
 
 team_ranking = TeamRanking(1, 4)
 team_ranking.loop()

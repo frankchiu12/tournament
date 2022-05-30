@@ -17,6 +17,7 @@ motion_ranking_result_sheet = sheet.get_worksheet(4)
 
 # preprocessing uses teamid_sheet
 # email_automator uses number_of_teams, team_list, and email_list
+# team_ranking uses nothing
 
 proposition_list = team_sheet.col_values(1)
 del proposition_list[0:1]

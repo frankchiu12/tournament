@@ -15,4 +15,3 @@ team_list = team_sheet.col_values(1)
 del team_list[0:1]
 team_list = team_list
 number_of_teams = len(team_list)
-print(number_of_teams)

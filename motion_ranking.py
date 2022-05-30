@@ -4,6 +4,10 @@ import time
 from datetime import datetime, timedelta
 from get_google_sheets import *
 
+matchup_sheet = sheet.get_worksheet(2)
+motion_ranking_sheet = sheet.get_worksheet(3)
+motion_ranking_result_sheet = sheet.get_worksheet(4)
+
 proposition_list = matchup_sheet.col_values(1)
 del proposition_list[0:1]
 opposition_list = matchup_sheet.col_values(2)

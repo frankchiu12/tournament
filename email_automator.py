@@ -3,6 +3,10 @@ from email.mime.multipart import MIMEMultipart
 import smtplib
 from get_google_sheets import *
 
+email_list = team_sheet.col_values(2)
+del email_list[0:1]
+email_list = email_list
+
 team_to_id = {'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'}
 
 for i in number_of_teams:

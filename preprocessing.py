@@ -1,5 +1,7 @@
 from get_google_sheets import *
 
+teamid_sheet = sheet.get_worksheet(1)
+
 class PreProcessing:
 
     def __init__(self):

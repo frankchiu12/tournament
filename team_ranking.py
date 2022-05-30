@@ -6,7 +6,7 @@ team_ranking_result_sheet = sheet.get_worksheet(9)
 class TeamRanking:
 
     def __init__(self, round, number_of_rounds):
-        # sheets contain results for each given round
+        # sheets containing results for each given round
         self.round_sheet = sheet.get_worksheet(round + 4)
         self.number_of_rounds = number_of_rounds
         # list of rows for each round sheet

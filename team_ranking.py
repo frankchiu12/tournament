@@ -3,7 +3,7 @@ from get_google_sheets import *
 
 team_ranking_result_sheet = sheet.get_worksheet(9)
 team_status_list = team_sheet.col_values(3)
-ESL_team_ranking_result_sheet = sheet.get_worksheet(10)
+ESL_team_ranking_result_sheet = sheet.get_worksheet(10)[1:]
 del team_status_list[0:1]
 status_list = ['ESL', 'Novice']
 

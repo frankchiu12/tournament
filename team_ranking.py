@@ -3,7 +3,9 @@ from get_google_sheets import *
 
 team_ranking_result_sheet = sheet.get_worksheet(9)
 team_status_list = team_sheet.col_values(3)
-status = ['ESL', 'Novice']
+ESL_team_ranking_result_sheet = sheet.get_worksheet(10)
+del team_status_list[0:1]
+status_list = ['ESL', 'Novice']
 
 class TeamRanking:
 
@@ -36,12 +38,14 @@ class TeamRanking:
             self.team_to_loss = {}
             self.team_to_win_count = {}
             self.team_to_win_count_and_average = {}
-            self.team_to_row = {}
+            self.team_to_row_score = {}
             self.win_count_list = []
             # list of scores to write into team_ranking_result_sheet
             self.score_list = []
             # ranked list of teams
             self.ranked_team_list = []
+            self.ranked_team_to_row = {}
+            self.status_to_team = {}
             self.sort_sheet()
         else:
             sys.exit()
@@ -110,9 +114,25 @@ class TeamRanking:
     def convert(self, tuple, dictionary):
         dictionary = dict(tuple)
         return dictionary
-    
-    def rank_on_status(self, status):
-        pass
+
+    def populate_ranked_team_to_row_dictionary(self):
+        for i in range(2, number_of_teams + 2):
+            if team_ranking_result_sheet.row_values(i)[1] not in self.ranked_team_to_row:
+                self.ranked_team_to_row[team_ranking_result_sheet.row_values(i)[1]] = team_ranking_result_sheet.row_values(i)[1 : self.number_of_rounds + 4]
+
+    def rank_on_status(self):
+        for i in range(number_of_teams):
+            if team_status_list[i] not in self.status_to_team:
+                self.status_to_team[team_status_list[i]] = []
+            self.status_to_team[team_status_list[i]].append(team_list[i])
+        for key, value in self.status_to_team.items():
+            if key == 'ESL':
+                ESL_team_row = []
+                for team in self.ranked_team_to_row:
+                    for ESL_team in value:
+                        if ESL_team == team:
+                            ESL_team_row.append(self.ranked_team_to_row[team])
+                ESL_team_ranking_result_sheet.update('B2:' + str(chr(ord('@')+self.number_of_rounds + 4)) + str(len(ESL_team_row) + 1), ESL_team_row)
 
     # iterate through each round to get the wins and averages to rank on
     def loop(self):
@@ -154,13 +174,13 @@ class TeamRanking:
 
         # maps from team to row
         for i in range(number_of_teams):
-            if team_list[i] not in self.team_to_row:
-                self.team_to_row[team_list[i]] = [x[i] for x in self.all_row_scores]
+            if team_list[i] not in self.team_to_row_score:
+                self.team_to_row_score[team_list[i]] = [x[i] for x in self.all_row_scores]
 
         # list of scores and teams to write into team_ranking_result_sheet, and the iteration is sorted
         for team in self.team_to_win_count_and_average:
             self.win_count_list.append(self.team_to_win_count[team])
-            self.score_list.append(self.team_to_row[team])
+            self.score_list.append(self.team_to_row_score[team])
             self.ranked_team_list.append(team)
 
         self.write_score_to_sheet()
@@ -173,6 +193,9 @@ class TeamRanking:
         for team in self.team_to_win_count_and_average:
             print(str(count) + '. ' + str(team))
             count = count + 1
+
+        self.populate_ranked_team_to_row_dictionary()
+        self.rank_on_status()
 
 team_ranking = TeamRanking(1, 4)
 team_ranking.loop()

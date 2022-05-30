@@ -141,6 +141,8 @@ class MotionRanking:
         motion_ranking_result_sheet.update_cell(i, 6, prop_veto)
         motion_ranking_result_sheet.update_cell(i, 7, opp_veto)
 
+        motion_ranking_result_sheet.format('A1:G1', {'textFormat': {'bold': True}})
+
         time = datetime.now() + timedelta(minutes=15)
         if motion_ranking_result_sheet.cell(i, 4).value == None:
             motion_ranking_result_sheet.update_cell(i, 4, str(time))

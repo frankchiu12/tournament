@@ -14,11 +14,11 @@ class TeamRanking:
         # maps from team to list of rows for each round sheet
         self.round_row_list_dictionary = {}
         # list of teams that don't have a ballot
-        self.unscored_team_list = []
+        self.no_ballot_team_list = []
         self.get_score_and_result()
         self.populate_row_list_dictionary()
 
-        if self.check_if_all_results_are_in():
+        if self.check_if_all_ballots_are_in():
             self.sorted_row_list = []
             self.all_row_values = []
             self.team_to_row_list = {}
@@ -42,33 +42,42 @@ class TeamRanking:
                 # int(row[1: 2][0]) is the score
                 self.round_row_list_dictionary[team] = int(row[1: 2][0])
 
-    def check_if_all_results_are_in(self):
+    # checks if all the ballots for the teams in the matchup are in
+    def check_if_all_ballots_are_in(self):
         for team in team_list:
             if team not in self.round_row_list_dictionary:
-                self.unscored_team_list.append(team)
-        if len(self.unscored_team_list) > 0:
-            print('Error: The following team/teams do(es) not have ballots: ' + str(self.unscored_team_list))
+                self.no_ballot_team_list.append(team)
+        if len(self.no_ballot_team_list) > 0:
+            print('Error: The following team/teams do(es) not have ballot(s): ' + str(self.no_ballot_team_list))
             return False
         return True
 
+    # sort the rows of scores and results in the same order of teams so we could index easily without checking which row belongs to which team
     def sort_sheet(self):
         for team in team_list:
             self.sorted_row_list.append(self.round_row_list_dictionary[team])
 
+    # write the round and scores to team_ranking_result_sheet
     def write_score_to_sheet(self):
         for round in range(self.number_of_rounds):
             team_ranking_result_sheet.update_cell(1, round + 3, 'ROUND ' + str(round + 1))
         team_ranking_result_sheet.update('C2', self.team_to_score_list)
 
+    # TODO: write to entire column
+    # write the ranking, teams, and averages to team_ranking_result_sheet
     def write_average_to_sheet(self):
         team_ranking_result_sheet.update_cell(1, 1, 'RANKING')
         team_ranking_result_sheet.update_cell(1, 2, 'TEAM')
-        team_ranking_result_sheet.update_cell(1, self.number_of_rounds + 3, 'AVERAGE')
+        team_ranking_result_sheet.update_cell(1, self.number_of_rounds + 4, 'AVERAGE')
         for i in range(len(self.sorted_team_list)):
-            team_ranking_result_sheet.update_cell(i + 2, 1, i + 2)
+            # ranking
+            team_ranking_result_sheet.update_cell(i + 2, 1, i + 1)
+            # team
             team_ranking_result_sheet.update_cell(i + 2, 2, self.sorted_team_list[i])
-            team_ranking_result_sheet.update_cell(i + 2, self.number_of_rounds + 3, self.team_to_average_list[self.sorted_team_list[i]])
+            # average
+            team_ranking_result_sheet.update_cell(i + 2, self.number_of_rounds + 4, self.team_to_average_list[self.sorted_team_list[i]])
 
+    # converts a list of tuples into a dictionary
     def convert(self, tuple, dictionary):
         dictionary = dict(tuple)
         return dictionary
@@ -97,8 +106,9 @@ class TeamRanking:
 
         self.write_score_to_sheet()
         self.write_average_to_sheet()
+        team_ranking_result_sheet.format('A1:H1', {'textFormat': {'bold': True}})
 
 team_ranking = TeamRanking(1, 4)
 team_ranking.loop()
 
-# REPL, status, panda
+# REPL, status, panda, wins

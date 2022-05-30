@@ -19,12 +19,16 @@ class TeamRanking:
         self.populate_row_list_dictionary()
 
         if self.check_if_all_ballots_are_in():
+            # list of rows of scores and results for one round in the same order of teams
             self.sorted_row_list = []
-            self.all_row_values = []
-            self.team_to_row_list = {}
-            self.team_to_average_list = {}
-            self.team_to_score_list = []
-            self.sorted_team_list = []
+            # all of the sorted rows for all the rounds
+            self.all_rows = []
+            self.team_to_average = {}
+            self.team_to_row = {}
+            # list of scores to write into team_ranking_result_sheet
+            self.score_list = []
+            # ranked list of teams
+            self.ranked_team_list = []
             self.sort_sheet()
         else:
             sys.exit()
@@ -61,48 +65,55 @@ class TeamRanking:
     def write_score_to_sheet(self):
         for round in range(self.number_of_rounds):
             team_ranking_result_sheet.update_cell(1, round + 3, 'ROUND ' + str(round + 1))
-        team_ranking_result_sheet.update('C2', self.team_to_score_list)
+        team_ranking_result_sheet.update('C2', self.score_list)
 
     # TODO: write to entire column
+
     # write the ranking, teams, and averages to team_ranking_result_sheet
     def write_average_to_sheet(self):
         team_ranking_result_sheet.update_cell(1, 1, 'RANKING')
         team_ranking_result_sheet.update_cell(1, 2, 'TEAM')
         team_ranking_result_sheet.update_cell(1, self.number_of_rounds + 4, 'AVERAGE')
-        for i in range(len(self.sorted_team_list)):
+        for i in range(len(self.ranked_team_list)):
             # ranking
             team_ranking_result_sheet.update_cell(i + 2, 1, i + 1)
             # team
-            team_ranking_result_sheet.update_cell(i + 2, 2, self.sorted_team_list[i])
+            team_ranking_result_sheet.update_cell(i + 2, 2, self.ranked_team_list[i])
             # average
-            team_ranking_result_sheet.update_cell(i + 2, self.number_of_rounds + 4, self.team_to_average_list[self.sorted_team_list[i]])
+            team_ranking_result_sheet.update_cell(i + 2, self.number_of_rounds + 4, self.team_to_average[self.ranked_team_list[i]])
 
     # converts a list of tuples into a dictionary
     def convert(self, tuple, dictionary):
         dictionary = dict(tuple)
         return dictionary
 
+    # iterate through each round to get the wins and averages to rank on
     def loop(self):
 
+        # iterate through 4 rounds
         for i in range(1, 5):
             team_ranking = TeamRanking(i, 4)
             self.sorted_row_list = team_ranking.sorted_row_list
-            self.all_row_values.append(self.sorted_row_list)
+            self.all_rows.append(self.sorted_row_list)
 
-        for team in range(len(team_list)):
-            if team_list[team] not in self.team_to_average_list:
-                self.team_to_average_list[team_list[team]] = [sum(row[j] for row in self.all_row_values) for j in range(len(self.all_row_values[0]))][team]/self.number_of_rounds
+        # maps from team to average
+        for i in range(number_of_teams):
+            if team_list[i] not in self.team_to_average:
+                self.team_to_average[team_list[i]] = [sum(row[j] for row in self.all_rows) for j in range(len(self.all_rows[0]))][i]/self.number_of_rounds
 
-        sorted_average_list = sorted(self.team_to_average_list.items(), key=lambda x: x[1], reverse=True)
-        self.team_to_average_list = self.convert(sorted_average_list, self.team_to_average_list)
+        # sort self.team_to_average dictionary by the average in descending order
+        sorted_average_list = sorted(self.team_to_average.items(), key=lambda x: x[1], reverse=True)
+        self.team_to_average = self.convert(sorted_average_list, self.team_to_average)
 
-        for team in range(len(team_list)):
-            if team_list[team] not in self.team_to_row_list:
-                self.team_to_row_list[team_list[team]] = [x[team] for x in self.all_row_values]
+        # maps from team to row
+        for i in range(number_of_teams):
+            if team_list[i] not in self.team_to_row:
+                self.team_to_row[team_list[i]] = [x[i] for x in self.all_rows]
 
-        for team in self.team_to_average_list:
-            self.team_to_score_list.append(self.team_to_row_list[team])
-            self.sorted_team_list.append(team)
+        # list of scores and teams to write into team_ranking_result_sheet
+        for team in self.team_to_average:
+            self.score_list.append(self.team_to_row[team])
+            self.ranked_team_list.append(team)
 
         self.write_score_to_sheet()
         self.write_average_to_sheet()

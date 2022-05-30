@@ -2,6 +2,8 @@ import sys
 from get_google_sheets import *
 
 team_ranking_result_sheet = sheet.get_worksheet(9)
+team_status_list = team_sheet.col_values(3)
+status = ['ESL', 'Novice']
 
 class TeamRanking:
 
@@ -108,6 +110,9 @@ class TeamRanking:
     def convert(self, tuple, dictionary):
         dictionary = dict(tuple)
         return dictionary
+    
+    def rank_on_status(self, status):
+        pass
 
     # iterate through each round to get the wins and averages to rank on
     def loop(self):
@@ -163,7 +168,13 @@ class TeamRanking:
         self.write_average_to_sheet()
         team_ranking_result_sheet.format('A1:H1', {'textFormat': {'bold': True}})
 
+        print('The ranking for the teams is as follows: \n')
+        count = 1
+        for team in self.team_to_win_count_and_average:
+            print(str(count) + '. ' + str(team))
+            count = count + 1
+
 team_ranking = TeamRanking(1, 4)
 team_ranking.loop()
 
-# REPL, status, panda, wins
+# REPL, status (win), panda

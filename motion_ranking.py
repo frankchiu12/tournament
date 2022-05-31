@@ -4,13 +4,13 @@ import time
 from datetime import datetime, timedelta
 from get_google_sheets import *
 
-matchup_sheet = sheet.get_worksheet(2)
-motion_ranking_sheet = sheet.get_worksheet(3)
-motion_ranking_result_sheet = sheet.get_worksheet(4)
+matchup_sheet = sheet.worksheet_by_title('Matchup')
+motion_ranking_sheet = sheet.worksheet_by_title('Motion Ranking')
+motion_ranking_result_sheet = sheet.worksheet_by_title('Motion Ranking Result')
 
-proposition_list = matchup_sheet.col_values(1)
+proposition_list = matchup_sheet.get_col(1, include_tailing_empty=False)
 del proposition_list[0:1]
-opposition_list = matchup_sheet.col_values(2)
+opposition_list = matchup_sheet.get_col(2, include_tailing_empty=False)
 del opposition_list[0:1]
 
 class MotionRanking:
@@ -46,15 +46,15 @@ class MotionRanking:
                 self.matchup[proposition_list[i]] = opposition_list[i]
 
     def get_motion_ranking(self):
-        team_list = motion_ranking_sheet.col_values(2)
+        team_list = motion_ranking_sheet.get_col(2, include_tailing_empty=False)
         del team_list[0:1]
-        team_id_list = motion_ranking_sheet.col_values(3)
+        team_id_list = motion_ranking_sheet.get_col(3, include_tailing_empty=False)
         del team_id_list[0:1]
-        motion_1_ranking = motion_ranking_sheet.col_values(4)
+        motion_1_ranking = motion_ranking_sheet.get_col(4, include_tailing_empty=False)
         del motion_1_ranking[0:1]
-        motion_2_ranking = motion_ranking_sheet.col_values(5)
+        motion_2_ranking = motion_ranking_sheet.get_col(5, include_tailing_empty=False)
         del motion_2_ranking[0:1]
-        motion_3_ranking = motion_ranking_sheet.col_values(6)
+        motion_3_ranking = motion_ranking_sheet.get_col(6, include_tailing_empty=False)
         del motion_3_ranking[0:1]
         matching_id_index_list = []
 
@@ -98,10 +98,15 @@ class MotionRanking:
                 prop_team_list.append(proposition)
                 opp_team_list.append(opposition)
 
+        motion_number_to_write_list = ['MOTION']
+        prop_veto_list = ['PROPOSITION VETO']
+        opp_veto_list = ['OPPOSITION VETO']
+
         for i in range(len(prop_team_list)):
-            motion_number_to_return_list = []
+
             prop_team_ranking = self.team_to_motion_ranking[prop_team_list[i]]
             opp_team_ranking = self.team_to_motion_ranking[opp_team_list[i]]
+            motion_number_to_return_list = []
             prop_veto = ''
             opp_veto = ''
 
@@ -122,35 +127,37 @@ class MotionRanking:
 
             if len(motion_number_to_return_list) > 1:
                 randomlist = [0, 1]
-                newlist = []
-                newlist.append(motion_number_to_return_list[random.choice(randomlist)])
-                motion_number_to_return_list = newlist
+                motion_number_to_return_list = [motion_number_to_return_list[random.choice(randomlist)]]
+            
+            motion_number_to_write_list.append(motion_number_to_return_list[0])
+            prop_veto_list.append(prop_veto)
+            opp_veto_list.append(opp_veto)
 
-            self.write_to_result_sheets(prop_team_list[i], opp_team_list[i], str(int(motion_number_to_return_list[0])), prop_veto, opp_veto, i + 2)
+            self.write_time_to_sheet(i+2)
 
             self.result_list.append(str(prop_team_list[i]) + ' and ' + str(opp_team_list[i]) + ' are debating Motion ' + str(int(motion_number_to_return_list[0])))
 
-    def write_to_result_sheets(self, prop, opp, motion_number_to_return, prop_veto, opp_veto, i):
-        motion_ranking_result_sheet.update_cell(1, 1, 'PROPOSITION')
-        motion_ranking_result_sheet.update_cell(1, 2, 'OPPOSITION')
-        motion_ranking_result_sheet.update_cell(1, 3, 'MOTION')
-        motion_ranking_result_sheet.update_cell(1, 4, 'TIME STARTED')
-        motion_ranking_result_sheet.update_cell(1, 5, 'TIME LEFT (MINUTES)')
-        motion_ranking_result_sheet.update_cell(1, 6, 'PROPOSITION VETO')
-        motion_ranking_result_sheet.update_cell(1, 7, 'OPPOSITION VETO')
+        self.write_other_information_to_sheet(motion_number_to_write_list, prop_veto_list, opp_veto_list)
+        DataRange('A1','G1', worksheet=motion_ranking_result_sheet).apply_format(bold)
 
-        motion_ranking_result_sheet.update_cell(i, 1, prop)
-        motion_ranking_result_sheet.update_cell(i, 2, opp)
-        motion_ranking_result_sheet.update_cell(i, 3, motion_number_to_return)
-        motion_ranking_result_sheet.update_cell(i, 6, prop_veto)
-        motion_ranking_result_sheet.update_cell(i, 7, opp_veto)
+    def write_other_information_to_sheet(self, motion_number_to_write_list, prop_veto_list, opp_veto_list):
+        if proposition_list[0] != 'PROPOSITION' and opposition_list[0] != 'OPPOSITION':
+            proposition_list.insert(0, 'PROPOSITION')
+            motion_ranking_result_sheet.update_col(1, proposition_list)
+            opposition_list.insert(0, 'OPPOSITION')
+            motion_ranking_result_sheet.update_col(2, opposition_list)
+        motion_ranking_result_sheet.update_col(3, motion_number_to_write_list)
+        motion_ranking_result_sheet.update_col(6, prop_veto_list)
+        motion_ranking_result_sheet.update_col(7, opp_veto_list)
 
-        motion_ranking_result_sheet.format('A1:G1', {'textFormat': {'bold': True}})
+    def write_time_to_sheet(self, i):
+        motion_ranking_result_sheet.update_value(str(chr(ord('@')+4)) + str(1), 'TIME STARTED')
+        motion_ranking_result_sheet.update_value(str(chr(ord('@')+5)) + str(1), 'TIME LEFT')
 
         time = datetime.now() + timedelta(minutes=15)
-        if motion_ranking_result_sheet.cell(i, 4).value == None:
-            motion_ranking_result_sheet.update_cell(i, 4, str(time))
-            motion_ranking_result_sheet.update_cell(i, 5, '= IF(D' + str(i) + '-NOW() > 0, MINUTE(D' + str(i) + '-NOW()), 0)')
+        if motion_ranking_result_sheet.cell((i, 4)).value == '':
+            motion_ranking_result_sheet.update_value(str(chr(ord('@')+4)) + str(i), str(time))
+            motion_ranking_result_sheet.update_value(str(chr(ord('@')+5)) + str(i), '= IF(D' + str(i) + '-NOW() > 0, MINUTE(D' + str(i) + '-NOW()), 0)')
 
     def loop(self):
         previous_sheet = motion_ranking_sheet.get_all_values()
@@ -164,7 +171,7 @@ class MotionRanking:
             if len(self.result_list) == len(self.matchup):
                 break
             # API constraints
-            time.sleep(100)
+            time.sleep(10)
 
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 motion_ranking.loop()

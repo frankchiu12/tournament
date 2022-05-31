@@ -1,6 +1,7 @@
 from get_google_sheets import *
+from uuid import uuid4
 
-teamid_sheet = sheet.get_worksheet(1)
+teamid_sheet = sheet.worksheet_by_title('Team To ID')
 
 class PreProcessing:
 
@@ -56,20 +57,22 @@ class PreProcessing:
         team_list = []
         id_list = []
 
+        team_list.append('TEAM')
+        id_list.append('TEAM ID')
+
         for key, value in self.team_to_id.items():
             team_list.append(key)
             id_list.append(value)
 
-        teamid_sheet.update_cell(1, 1, 'TEAM')
-        teamid_sheet.update_cell(1, 2, 'TEAM ID')
+        teamid_sheet.update_col(1, team_list)
+        teamid_sheet.update_col(2, id_list)
 
-        # TODO: update entire column
-        for i in range (2, number_of_teams + 2):
-            teamid_sheet.update_cell(i, 1, team_list[i-2])
-            teamid_sheet.update_cell(i, 2, id_list[i-2])
+        DataRange('A1','B1', worksheet=teamid_sheet).apply_format(bold)
 
     def convert_id_to_name(self, id):
         for key, value in self.team_to_id.items():
             if value == id:
                 return key
         print('ERROR: The id does not exist.')
+
+pre_processing = PreProcessing()

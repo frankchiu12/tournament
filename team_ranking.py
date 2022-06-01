@@ -114,7 +114,7 @@ class TeamRanking:
         counter = 1
 
         for round in range(1, self.number_of_rounds + 1):
-            self.round_column_header_list = self.round_column_header_list + ['Round ' + str(round)]
+            self.round_column_header_list = self.round_column_header_list + ['ROUND ' + str(round)]
         self.score_list.append(self.round_column_header_list)
 
         for team in self.team_to_win_count_and_average:
@@ -130,7 +130,7 @@ class TeamRanking:
 
     def write_win_count_to_sheet(self):
         team_ranking_result_sheet.update_col(self.number_of_rounds + 3, self.win_count_list)
-    
+
     def write_average_to_sheet(self):
         team_ranking_result_sheet.update_col(1, self.ranking_number_list)
         team_ranking_result_sheet.update_col(2, self.ranked_team_list)
@@ -153,56 +153,37 @@ class TeamRanking:
                 self.status_to_team[team_status_list[i]] = []
             self.status_to_team[team_status_list[i]].append(team_list[i])
         for key, value in self.status_to_team.items():
-            if key == 'ESL' and len(self.status_to_team[key]) > 0:
-                ESL_team_ranking_result_sheet = sheet.add_worksheet('ESL Team Ranking',rows = 1000, cols = 26) 
-                ESL_ranking_number_list = []
-                ESL_row_header_list = ['RANKING', 'ESL TEAM']
-                ESL_team_row = []
-            
+            self.rank_on_status_helper('ESL', 'ESL Team Ranking')
+            self.rank_on_status_helper('Novice', 'Novice Team Ranking')
+
+    def rank_on_status_helper(self, status_string, worksheet_title):
+        for key, value in self.status_to_team.items():
+            if key == status_string and len(self.status_to_team[key]) > 0:
+                status_team_ranking_result_sheet = sheet.add_worksheet(worksheet_title,rows = 1000, cols = 26) 
+                status_ranking_number_list = []
+                status_row_header_list = ['RANKING', status_string.upper() + ' TEAM']
+                status_team_row = []
+
                 for i in range(self.number_of_rounds):
-                    ESL_row_header_list.append('ROUND ' + str(i + 1))
-                
-                ESL_row_header_list = ESL_row_header_list + ['WINS', 'AVERAGE']
+                    status_row_header_list.append('ROUND ' + str(i + 1))
+
+                status_row_header_list = status_row_header_list + ['WINS', 'AVERAGE']
 
                 for team in self.ranked_team_to_row:
-                    for ESL_team in value:
-                        if ESL_team == team:
-                            ESL_team_row.append(self.ranked_team_to_row[team])
+                    for status_team in value:
+                        if status_team == team:
+                            status_team_row.append(self.ranked_team_to_row[team])
 
-                for i in range(len(ESL_team_row)):
-                    ESL_ranking_number_list.append(i + 1)
+                for i in range(len(status_team_row)):
+                    status_ranking_number_list.append(i + 1)
 
-                ESL_team_ranking_result_sheet.update_row(1, ESL_row_header_list)
-                ESL_team_ranking_result_sheet.update_col(1, ESL_ranking_number_list, 1)
-                ESL_team_ranking_result_sheet.update_values('B2', ESL_team_row)
-                DataRange('A1','Z1', worksheet=ESL_team_ranking_result_sheet).apply_format(bold)
-
-            if key == 'Novice' and len(self.status_to_team[key]) > 0:
-                novice_team_ranking_result_sheet = sheet.add_worksheet('Novice Team Ranking',rows = 1000, cols = 26) 
-                novice_ranking_number_list = []
-                novice_row_header_list = ['RANKING', 'NOVICE TEAM']
-                novice_team_row = []
-            
-                for i in range(self.number_of_rounds):
-                    novice_row_header_list.append('ROUND ' + str(i + 1))
-                
-                novice_row_header_list = novice_row_header_list + ['WINS', 'AVERAGE']
-
-                for team in self.ranked_team_to_row:
-                    for novice_team in value:
-                        if novice_team == team:
-                            novice_team_row.append(self.ranked_team_to_row[team])
-
-                for i in range(len(novice_team_row)):
-                    novice_ranking_number_list.append(i + 1)
-
-                novice_team_ranking_result_sheet.update_row(1, novice_row_header_list)
-                novice_team_ranking_result_sheet.update_col(1, novice_ranking_number_list, 1)
-                novice_team_ranking_result_sheet.update_values('B2', novice_team_row)
-                DataRange('A1','Z1', worksheet=novice_team_ranking_result_sheet).apply_format(bold)
+                status_team_ranking_result_sheet.update_row(1, status_row_header_list)
+                status_team_ranking_result_sheet.update_col(1, status_ranking_number_list, 1)
+                status_team_ranking_result_sheet.update_values('B2', status_team_row)
+                DataRange('A1','Z1', worksheet=status_team_ranking_result_sheet).apply_format(bold)
 
 team_ranking_result_sheet.clear('A1')
-team_ranking = TeamRanking(1, 4)
+team_ranking = TeamRanking(1, 5)
 team_ranking.loop()
 
-# wins and losses
+# look up wins and losses

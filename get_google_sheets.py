@@ -7,10 +7,8 @@ from pygsheets.datarange import DataRange
 sheet = pygsheets.authorize(service_account_file='motion_ranking.json').open('Motion Ranking')
 
 team_sheet = sheet.worksheet_by_title('Team')
-# list of teams
-team_list = team_sheet.get_col(1, include_tailing_empty=False)
-# delete the column header
-del team_list[0:1]
+# list of teams (deleting the column header)
+team_list = team_sheet.get_col(1, include_tailing_empty=False)[1:]
 # global variable of the number of teams
 number_of_teams = len(team_list)
 

@@ -24,14 +24,13 @@ class TeamRanking:
             self.team_to_average = {}
             self.team_to_win_count = {}
             self.team_to_win_count_and_average = {}
-
-            # lists to write into team_ranking_result_sheet
+            # lists to write to team_ranking_result_sheet
+            self.round_column_header_list = []
+            self.ranking_number_list = ['RANKING']
+            self.ranked_team_list = ['TEAM']
             self.score_list = []
-            self.win_count_list = []
-            self.average_list = []
-            self.ranking_number_list = []
-            self.ranked_team_list = []
-
+            self.win_count_list = ['WINS']
+            self.average_list = ['AVERAGE']
             # for ranking ESL and Novice teams
             self.ranked_team_to_row = {}
             self.status_to_team = {}
@@ -75,27 +74,7 @@ class TeamRanking:
         self.populate_team_to_win_loss_average_dictionaries()
         self.populate_team_to_win_count_win_count_and_average_dictionaries()
         self.rank()
-
-        # lists to write to team_ranking_result_sheet
-        round_column_header_list = []
-        self.ranking_number_list.append('RANKING')
-        self.ranked_team_list.append('TEAM')
-        counter = 1
-
-        for round in range(1, self.number_of_rounds + 1):
-            round_column_header_list = round_column_header_list + ['Round ' + str(round)]
-        self.score_list.append(round_column_header_list)
-        self.win_count_list.append('WINS')
-        self.average_list.append('AVERAGE')
-
-        for team in self.team_to_win_count_and_average:
-            self.ranking_number_list.append(counter)
-            self.ranked_team_list.append(team)
-            self.win_count_list.append(self.team_to_win_count[team])
-            self.score_list.append(self.team_to_score[team])
-            self.average_list.append(self.team_to_average[team])
-            counter += 1
-        
+        self.populate_lists_to_write_to_sheet()
         self.write_score_to_sheet()
         self.write_win_count_to_sheet()
         self.write_average_to_sheet()
@@ -131,6 +110,21 @@ class TeamRanking:
         sorted_win_count_and_average_list = sorted(self.team_to_win_count_and_average.items(), key=lambda x: (x[1], x[1][1]), reverse=True)
         self.team_to_win_count_and_average = self.convert(sorted_win_count_and_average_list, self.team_to_win_count_and_average)
 
+    def populate_lists_to_write_to_sheet(self):
+        counter = 1
+
+        for round in range(1, self.number_of_rounds + 1):
+            self.round_column_header_list = self.round_column_header_list + ['Round ' + str(round)]
+        self.score_list.append(self.round_column_header_list)
+
+        for team in self.team_to_win_count_and_average:
+            self.ranking_number_list.append(counter)
+            self.ranked_team_list.append(team)
+            self.score_list.append(self.team_to_score[team])
+            self.win_count_list.append(self.team_to_win_count[team])
+            self.average_list.append(self.team_to_average[team])
+            counter += 1
+
     def write_score_to_sheet(self):
         team_ranking_result_sheet.update_values('C1', self.score_list)
 
@@ -142,10 +136,12 @@ class TeamRanking:
         team_ranking_result_sheet.update_col(2, self.ranked_team_list)
         team_ranking_result_sheet.update_col(self.number_of_rounds + 4, self.average_list)
 
+    # converts a list of tuples into a dictionary
     def convert(self, tuple, dictionary):
         dictionary = dict(tuple)
         return dictionary
 
+    # maps from ranked_team_to_row
     def populate_ranked_team_to_row_dictionary(self):
         for i in range(2, number_of_teams + 2):
             if team_ranking_result_sheet.get_row(i, include_tailing_empty=False)[1] not in self.ranked_team_to_row:
@@ -180,7 +176,6 @@ class TeamRanking:
                 ESL_team_ranking_result_sheet.update_col(1, ESL_ranking_number_list, 1)
                 ESL_team_ranking_result_sheet.update_values('B2', ESL_team_row)
                 DataRange('A1','Z1', worksheet=ESL_team_ranking_result_sheet).apply_format(bold)
-
 
             if key == 'Novice' and len(self.status_to_team[key]) > 0:
                 novice_team_ranking_result_sheet = sheet.add_worksheet('Novice Team Ranking',rows = 1000, cols = 26) 

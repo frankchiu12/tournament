@@ -152,9 +152,8 @@ class TeamRanking:
             if team_status_list[i] not in self.status_to_team:
                 self.status_to_team[team_status_list[i]] = []
             self.status_to_team[team_status_list[i]].append(team_list[i])
-        for key, value in self.status_to_team.items():
-            self.rank_on_status_helper('ESL', 'ESL Team Ranking')
-            self.rank_on_status_helper('Novice', 'Novice Team Ranking')
+        self.rank_on_status_helper('ESL', 'ESL Team Ranking')
+        self.rank_on_status_helper('Novice', 'Novice Team Ranking')
 
     def rank_on_status_helper(self, status_string, worksheet_title):
         for key, value in self.status_to_team.items():
@@ -223,9 +222,13 @@ class TeamRanking:
         else:
             print('That team does not exist.')
 
-team_ranking_result_sheet.clear('A1')
-team_ranking = TeamRanking(1, 5)
-team_ranking.loop()
-team_ranking.get_results('d')
+try:
+    team_ranking_result_sheet.clear('A1')
+    sheet.del_worksheet(sheet.worksheet_by_title('ESL Team Ranking'))
+    sheet.del_worksheet(sheet.worksheet_by_title('Novice Team Ranking'))
+    team_ranking = TeamRanking(1, 5)
+    team_ranking.loop()
+except:
+    pass
 
-#HttpError: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/1Oc3Nhj1CgxcMAJXk08IJQ0E9S4YqE8Eqnb7wqY_UZQ0:batchUpdate?fields=replies%2FaddSheet&alt=json returned "Invalid requests[0].addSheet: A sheet with the name "ESL Team Ranking" already exists. Please enter another name.". Details: "Invalid requests[0].addSheet: A sheet with the name "ESL Team Ranking" already exists. Please enter another name.">
+team_ranking.get_results('d')

@@ -182,8 +182,50 @@ class TeamRanking:
                 status_team_ranking_result_sheet.update_values('B2', status_team_row)
                 DataRange('A1','Z1', worksheet=status_team_ranking_result_sheet).apply_format(bold)
 
+    # gets wins and losses of a specific team
+    def get_results(self, team):
+        if team in self.team_to_win:
+            win_result_to_return = 'Team ' + str(team) + ' won '
+            counter = 1
+            all_none = False
+
+            for win in self.team_to_win[team]:
+                if win != 'None':
+                    win_result_to_return = win_result_to_return + 'against team ' + str(win) + ' in round ' + str(counter) + ', '
+                    all_none = True
+                counter += 1
+            if all_none:
+                win_result_to_return_split = win_result_to_return.split(', ')
+                if len(win_result_to_return_split) != 2:
+                    win_result_to_return_split[len(win_result_to_return_split) - 2] = 'and ' + win_result_to_return_split[len(win_result_to_return_split) - 2]
+                print(', '.join([s for s in win_result_to_return_split if s]) + '.')
+            else:
+                print('Team ' + str(team) + ' did not win.')
+
+        if team in self.team_to_loss:
+            counter = 1
+            all_none = False
+            loss_result_to_return = 'Team ' + str(team) + ' lost '
+
+            for loss in self.team_to_loss[team]:
+                if loss != 'None':
+                    loss_result_to_return = loss_result_to_return + 'against team ' + str(loss) + ' in round ' + str(counter) + ', '
+                    all_none = True
+                counter += 1
+            if all_none:
+                loss_result_to_return = loss_result_to_return.split(', ')
+                if len(loss_result_to_return) != 2:
+                    loss_result_to_return[len(loss_result_to_return) - 2] = 'and ' + loss_result_to_return[len(loss_result_to_return) - 2]
+                print('\n' + ', '.join([s for s in loss_result_to_return if s]) + '.')
+            else: 
+                print('\n' + 'Team ' + str(team) + ' did not lose.')
+
+        else:
+            print('That team does not exist.')
+
 team_ranking_result_sheet.clear('A1')
 team_ranking = TeamRanking(1, 5)
 team_ranking.loop()
+team_ranking.get_results('d')
 
-# look up wins and losses
+#HttpError: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/1Oc3Nhj1CgxcMAJXk08IJQ0E9S4YqE8Eqnb7wqY_UZQ0:batchUpdate?fields=replies%2FaddSheet&alt=json returned "Invalid requests[0].addSheet: A sheet with the name "ESL Team Ranking" already exists. Please enter another name.". Details: "Invalid requests[0].addSheet: A sheet with the name "ESL Team Ranking" already exists. Please enter another name.">

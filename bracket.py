@@ -9,7 +9,7 @@ team_and_seed_list = outrounds_sheet.get_col(1, include_tailing_empty=False)
 number_of_teams = len(team_and_seed_list)
 number_of_rounds = int(math.log(number_of_teams, 2)) + 1
 seed_label_list_16 = ['1', '16', '8', '9', '4', '13', '5', '12', '2', '15', '7', '10', '3', '14', '6', '11']
-maximum_number_of_dashes = 22
+number_of_dashes = 25
 
 class Bracket:
 
@@ -22,7 +22,7 @@ class Bracket:
         for i in range(0, number_of_rounds):
             self.columns.append([])
             for j in range(2 ** (number_of_rounds - i - 1)):
-                self.columns[i].append('-' * maximum_number_of_dashes)
+                self.columns[i].append('-' * number_of_dashes)
         self.columns[0] = self.team_in_seed_label_order_list
 
     def show(self):
@@ -31,24 +31,24 @@ class Bracket:
 
         sys.stdout.write('Seed ')
         for i in range(1, number_of_rounds + 1):
-            sys.stdout.write(('Round ' + str(i)).rjust(maximum_number_of_dashes + 3))
+            sys.stdout.write(('Round ' + str(i)).rjust(number_of_dashes + 3))
         print('\n')
         self.recurse(number_of_rounds - 1, 0)
 
     def recurse(self, round_number, tail):
         if round_number == 0:
             if tail == -1:
-                print(str(self.seed_label_list_copy.pop(0)).rjust(4) + self.columns_copy[0].pop(0).rjust(maximum_number_of_dashes + 3) + ' \\')
+                print(str(self.seed_label_list_copy.pop(0)).rjust(4) + self.columns_copy[0].pop(0).rjust(number_of_dashes + 3) + ' \\')
             elif tail == 1:
-                print(str(self.seed_label_list_copy.pop(0)).rjust(4) + self.columns_copy[0].pop(0).rjust(maximum_number_of_dashes + 3) + ' /')
+                print(str(self.seed_label_list_copy.pop(0)).rjust(4) + self.columns_copy[0].pop(0).rjust(number_of_dashes + 3) + ' /')
         else:
             self.recurse(round_number - 1, -1)
             if tail == -1:
-                print(''.rjust(4) + ''.rjust((maximum_number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(maximum_number_of_dashes + 3) + " \\")
+                print(''.rjust(4) + ''.rjust((number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3) + " \\")
             elif tail == 1:
-                print(''.rjust(4) + ''.rjust((maximum_number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(maximum_number_of_dashes + 3) + ' /')
+                print(''.rjust(4) + ''.rjust((number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3) + ' /')
             else:
-                print(''.rjust(4)+''.rjust((maximum_number_of_dashes + 3)*round_number)+self.columns_copy[round_number].pop(0).rjust(maximum_number_of_dashes + 3))
+                print(''.rjust(4)+''.rjust((number_of_dashes + 3)*round_number)+self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3))
             self.recurse(round_number - 1, 1)
 
     def update(self,rounds,teams):
@@ -59,7 +59,7 @@ class Bracket:
                 self.columns[rounds-1][int(index/2)] = self.columns[rounds-2][index]
             except:
                 return False
-        if "-"*maximum_number_of_dashes in self.columns[rounds-1]:
+        if "-"*number_of_dashes in self.columns[rounds-1]:
             return False
         return True
 

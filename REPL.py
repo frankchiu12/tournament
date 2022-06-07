@@ -119,6 +119,7 @@ def determine_winner_auto():
             determine_winner_auto()
 
 def main():
+    os.system('cls' if os.name == 'nt' else 'clear')
     print('\n' + 'Use this to simulate a tournament. To manually input results, type manual. To autogenerate results, type auto.')
     x = input('\n' + 'command> ')
 

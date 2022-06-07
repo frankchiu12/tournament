@@ -59,7 +59,7 @@ class Bracket:
                 self.columns[rounds-1][int(index/2)] = self.columns[rounds-2][index]
             except:
                 return False
-        if "-"*number_of_dashes in self.columns[rounds-1]:
+        if '-' * number_of_dashes in self.columns[rounds-1]:
             return False
         return True
 
@@ -67,7 +67,7 @@ def main():
     bracket = Bracket()
     os.system('cls' if os.name == 'nt' else 'clear')
     bracket.show()
-    for i in range(2,number_of_rounds+1):
+    for i in range(2, number_of_rounds + 1):
         updated = False
         while not updated:
             print("")

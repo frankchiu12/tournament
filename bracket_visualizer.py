@@ -5,11 +5,15 @@ import copy
 import os
 
 outrounds_sheet = sheet.worksheet_by_title('Outrounds')
+# list of teams and their seed
 team_and_seed_list = outrounds_sheet.get_col(1, include_tailing_empty=False)
 number_of_teams = len(team_and_seed_list)
+# it is log base 2 + 1
 number_of_rounds = int(math.log(number_of_teams, 2)) + 1
+# this is the order of seeding that appears on the bracket visualizer
 seed_label_list_16 = ['1', '16', '8', '9', '4', '13', '5', '12', '2', '15', '7', '10', '3', '14', '6', '11']
-number_of_dashes = 25
+# number of dashes for the connecting lines
+number_of_dashes = 22
 
 class Bracket:
 
@@ -44,11 +48,11 @@ class Bracket:
         else:
             self.recurse(round_number - 1, -1)
             if tail == -1:
-                print(''.rjust(4) + ''.rjust((number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3) + " \\")
+                print(''.rjust(4) + ''.rjust((number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3) + ' \\')
             elif tail == 1:
                 print(''.rjust(4) + ''.rjust((number_of_dashes + 3) * round_number) + self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3) + ' /')
             else:
-                print(''.rjust(4)+''.rjust((number_of_dashes + 3)*round_number)+self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3))
+                print(''.rjust(4) + ''.rjust((number_of_dashes + 3)*round_number) + self.columns_copy[round_number].pop(0).rjust(number_of_dashes + 3))
             self.recurse(round_number - 1, 1)
 
     def update(self,rounds,teams):
@@ -56,10 +60,10 @@ class Bracket:
         for team in teams:
             try:
                 index = lowercase.index(team.lower())
-                self.columns[rounds-1][int(index/2)] = self.columns[rounds-2][index]
+                self.columns[rounds-1][int(index/2)] = self.columns[rounds - 2][index]
             except:
                 return False
-        if '-' * number_of_dashes in self.columns[rounds-1]:
+        if '-' * number_of_dashes in self.columns[rounds - 1]:
             return False
         return True
 

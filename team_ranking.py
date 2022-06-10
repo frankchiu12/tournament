@@ -228,7 +228,6 @@ try:
     sheet.del_worksheet(sheet.worksheet_by_title('Novice Team Ranking'))
     team_ranking = TeamRanking(1, 5)
     team_ranking.loop()
+    team_ranking.get_results('d')
 except:
     pass
-
-team_ranking.get_results('d')

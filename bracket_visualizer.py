@@ -6,7 +6,7 @@ import os
 
 outrounds_sheet = sheet.worksheet_by_title('Outrounds')
 # list of teams in the order of their seed (deleting the column header)
-team_and_seed_list = outrounds_sheet.get_col(4, include_tailing_empty=False)
+team_and_seed_list = outrounds_sheet.get_col(1, include_tailing_empty=False)
 number_of_teams = len(team_and_seed_list)
 # log base 2 + 1
 number_of_rounds = int(math.log(number_of_teams, 2)) + 1

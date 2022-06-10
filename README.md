@@ -23,6 +23,6 @@ To be specific, here is what each file does:
 
 7. bracket_visualizer.py is a visualization tool for tournament brackets. Right now, it works on outrounds with either 16 or 8 teams, and an error is thrown if the number of teams that are in the outrounds read in from the Google Sheets "Outrounds" is not the correct number of teams. In the future, this program could be expanded to take into account more team numbers. Intuitively after you run the program you get a visualization of the bracket, and the terminal prompts you to update the round and matchups within with the team that won. Note that the input is not case-sensitive, so the program finds the team that most closely approximates the input as the team that won. So if the team that won is "Golden State Warriors," inputs like "gold," "state," "warriors," "w," etc. all work. To revise a previous input, just type in the correct team that won and the bracket would be visually updated. This process repeats until the entire bracket is complete and a winner is determined.
 
-![bracket_visualizer_example]('bracket_visualizer_example.png')
+![bracket_visualizer_example]('https://github.com/frankchiu12/tournament/blob/main/bracket_visualizer_example.png')
 
 Have fun running a tournament :)

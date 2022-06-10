@@ -154,6 +154,6 @@ if __name__ == '__main__':
     if check_if_seeding_valid():
         populate_team_to_weight_and_weight_to_team_dictionaries()
         get_and_populate_matchup()
+        main()
     else:
         print('The number of teams is not valid.')
-    main()

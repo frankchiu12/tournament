@@ -188,5 +188,6 @@ class MotionRanking:
             time.sleep(10)
 
 motion_ranking_result_sheet.clear('A1')
+# NOTE: need to update this parameter based on the team_to_id dictionary from PreProcessing
 motion_ranking = MotionRanking({'a': '2689101135', 'b': '2379289842', 'c': '2566987667', 'd': '3797752721', 'e': '852797324', 'f': '1911318538'})
 motion_ranking.loop()

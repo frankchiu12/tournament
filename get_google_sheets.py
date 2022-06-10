@@ -9,7 +9,6 @@ sheet = pygsheets.authorize(service_account_file='motion_ranking.json').open('Mo
 team_sheet = sheet.worksheet_by_title('Team')
 # list of teams (deleting the column header)
 team_list = team_sheet.get_col(1, include_tailing_empty=False)[1:]
-# global variable of the number of teams
 number_of_teams = len(team_list)
 
 # used for bolding cells

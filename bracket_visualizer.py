@@ -82,8 +82,9 @@ def main():
             updated = bracket.update(i, teams)
             os.system('cls' if os.name == 'nt' else 'clear')
             bracket.show()
-    print("")
-    print(bracket.columns[-1][0]+" won!")
+    print('\n' + str(bracket.columns[-1][0]) + ' won!')
 
 if __name__ == '__main__':
     main()
+
+#https://stackoverflow.com/questions/27650369/how-does-a-recursive-function-with-two-recursive-calls-work

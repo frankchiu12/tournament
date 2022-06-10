@@ -100,6 +100,9 @@ class Bracket:
 def main():
     # clear the terminal
     os.system('cls' if os.name == 'nt' else 'clear')
+    if number_of_teams != 16 and number_of_teams != 8:
+        print('The number of teams is not valid. \n')
+        return
     bracket = Bracket()
     bracket.show()
     for i in range(2, number_of_rounds + 1):

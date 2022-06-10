@@ -52,7 +52,7 @@ class PreProcessing:
                 else:
                     is_unique = True
 
-        # NOTE: this list is important for the other classes!
+        # NOTE: this dictionary is important for the other classes!
         print(self.team_to_id)
 
     def write_to_team_id_sheet(self):

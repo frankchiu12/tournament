@@ -40,8 +40,11 @@ def determine_winner_manual():
         y = input('\n' + 'team> ')
         # if the input does not match any of the teams in the matchup
         while not any(y.lower() in team.lower() for team in matchup[i]):
-            print('Your input does not match any of the teams. Try again.')
-            y = input('\n' + 'team> ')
+            if y == 'quit':
+                return
+            else:
+                print('Your input does not match any of the teams. Try again.')
+                y = input('\n' + 'team> ')
         # store the first team that matches the input
         team_to_return = next((team for team in matchup[i] if y.lower() in team.lower()), None)
         matchup[i] = team_to_return
@@ -146,6 +149,8 @@ def main():
         print(str(matchup[1][0]) + ' is the CHAMPION! \n')
     elif x == 'manual':
         determine_winner_manual()
+    elif x == "quit":
+        pass
     else:
         print('That command does not exist. Redoing...')
         main()
